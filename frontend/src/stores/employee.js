@@ -1,36 +1,60 @@
-import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
+import axios from 'axios'
+import { backendurl } from '@/constant'
 
 export const useEmployeeStore = defineStore('employee', () => {
-  const employees = ref([])
-
-  function addEmployee(employee) {
-    employees.value.push(employee)
-  }
-
-  function deleteEmployee(employeeId) {
-    const index = employees.value.findIndex(emp => emp.id === employeeId)
-    if (index !== -1) {
-      employees.value.splice(index, 1)
+  
+  async function addEmployee(employee) {
+    try {
+      const response = await axios.post(`${backendurl}/api/employee/create`, employee)
+      return response.data.employee 
+    } catch (error) {
+      console.error(error)
+      throw new Error('Failed to add employee')
     }
   }
 
-  function updateEmployee(employeeId, updatedEmployee) {
-    const index = employees.value.findIndex(emp => emp.id === employeeId)
-    if (index !== -1) {
-      employees.value.splice(index, 1, updatedEmployee)
+  async function deleteEmployee(employeeId) {
+    try {
+      const response = await axios.delete(`${backendurl}/api/employee/${employeeId}`)
+      return response.data // Return success message
+    } catch (error) {
+      console.error(error)
+      throw new Error('Failed to delete employee')
     }
   }
 
-  function getEmployee(employeeId) {
-    return employees.value.find(emp => emp.id === employeeId)
+  async function updateEmployee(employeeId, updatedEmployee) {
+    try {
+      const response = await axios.put(`${backendurl}/api/employee/${employeeId}`, updatedEmployee)
+      return response.data.employee // Return the updated employee
+    } catch (error) {
+      console.error(error)
+      throw new Error('Failed to update employee')
+    }
   }
 
-  function getAllEmployees() {
-    return employees.value
+  async function getEmployee(employeeId) {
+    try {
+      const response = await axios.get(`${backendurl}/api/employee/${employeeId}`)
+    
+      return response.data 
+    } catch (error) {
+      console.error(error)
+      throw new Error('Failed to get employee')
+    }
   }
 
-  const totalEmployees = computed(() => employees.value.length)
+  async function getAllEmployees() {
+    try {
+      const response = await axios.get(`${backendurl}/api/employee`)
+      console.log(response.data)
+      return  await response.data 
+    } catch (error) {
+      console.error(error)
+      throw new Error('Failed to get all employees')
+    }
+  }
 
-  return { employees, addEmployee, deleteEmployee, updateEmployee, getEmployee, totalEmployees,getAllEmployees }
+  return { addEmployee, deleteEmployee, updateEmployee, getEmployee, getAllEmployees }
 })

@@ -15,10 +15,6 @@
             <label for="employmentField">Field of Employment</label>
             <InputText id="employmentField" v-model="employee.employmentField" />
           </div>
-          <!-- <div class="p-field">
-            <label for="skills">Skills</label>
-            <Chips v-model="employee.skills" />
-          </div> -->
           <div class="p-field">
             <label for="skills">Skills</label>
             <div v-for="(skill,index) in employee.skills" :key="index" class="skill-input">
@@ -43,19 +39,10 @@
   <script>
   import { ref } from 'vue'
   import { useEmployeeStore } from '@/stores/employee'
-  import Textarea from 'primevue/textarea'
-  import InputText from 'primevue/inputtext'
-  import Button from 'primevue/button'
-  import Chips from 'primevue/chips'
   import { useRouter } from 'vue-router'
   
   export default {
-    components: {
-      InputText,
-      Textarea,
-      Button,
-      Chips
-    },
+  
     setup() {
       const router = useRouter()
       const employee = ref({
@@ -75,8 +62,6 @@
 
       const validSkill = employee.value.skills.filter(skill => skill.trim()!=='')
 
-
-  
         const employeeData = {
           ...employee.value,
           fieldOfEmployment: employee.value.employmentField,skills:validSkill
@@ -137,14 +122,11 @@
   .skill-input{
     display: flex;
     align-items: center;
-
-
   }
 
   .skill-input input{
     width: 80%;
     margin-top: 1rem;
-
   }
 
   .add-skill,.remove-skill{

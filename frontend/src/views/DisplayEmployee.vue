@@ -28,24 +28,18 @@
   
 <script>
 import { useEmployeeStore } from '@/stores/employee'
-import Card from 'primevue/card'
 import { onMounted, ref } from 'vue'
 
 export default {
-  components: {
-    Card
-  },
   setup() {
-    const employees = ref([])
+    let employees = ref([])
     const employeeStore = useEmployeeStore()
 
     onMounted(async () => {
-      try {
-        employees.value = await employeeStore.getAllEmployees()
-      } catch (error) {
-        console.error('Error fetching employees:', error)
-      }
-    })
+      employees.value = await employeeStore.displayEmployee();
+      console.log(employees.value)
+    });
+   
 
     return {
       employees
@@ -69,15 +63,15 @@ h2 {
 }
 
 .text-muted {
-  color: #6c757d; /* muted grey color */
+  color: #6c757d; 
 }
 
 .text-primary {
-  color: #007bff; /* primary blue color */
+  color: #007bff;
 }
 
 .text-secondary {
-  color: #6c757d; /* secondary grey color */
+  color: #6c757d;
 }
 
 .p-text-bold {

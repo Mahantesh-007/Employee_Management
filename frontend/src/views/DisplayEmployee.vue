@@ -28,19 +28,14 @@
   
 <script>
 import { useEmployeeStore } from '@/stores/employee'
-import { onMounted, ref } from 'vue'
+import {  ref } from 'vue'
 
 export default {
   setup() {
     let employees = ref([])
     const employeeStore = useEmployeeStore()
-
-    onMounted(async () => {
-      employees.value = await employeeStore.displayEmployee();
+      employees.value = employeeStore.displayEmployee();
       console.log(employees.value)
-    });
-   
-
     return {
       employees
     }

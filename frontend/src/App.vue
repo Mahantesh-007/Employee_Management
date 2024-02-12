@@ -1,6 +1,13 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import { useEmployeeStore } from './stores/employee';
+import { onMounted } from 'vue';
+
+const employeeStore = useEmployeeStore();
+
+onMounted(async()=>{
+  await employeeStore.getAllEmployees();
+})
 </script>
 
 <template>

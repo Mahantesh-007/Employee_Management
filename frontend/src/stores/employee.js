@@ -2,14 +2,10 @@ import { defineStore } from 'pinia'
 import axios from 'axios'
 import { backendurl } from '@/constant'
 import { ref } from 'vue'
-import { onMounted } from 'vue'
-
 
 export const useEmployeeStore = defineStore('employee', () => {
 
   let employee = ref([]);
-
-  onMounted(getAllEmployees);
 
   async function addEmployee(employee) {
     try {
@@ -57,7 +53,7 @@ export const useEmployeeStore = defineStore('employee', () => {
     try {
       const response = await axios.get(`${backendurl}/api/employee`)
       console.log(response.data);
-      employeedata(response.data);
+      employee.value=response.data;
       return  await response.data 
     } catch (error) {
       console.error(error)
@@ -65,10 +61,6 @@ export const useEmployeeStore = defineStore('employee', () => {
     }
   }
 
-  async function employeedata(data){
-    employee = data;
-    console.log(employee)
-  }
 
   function displayEmployee(){
     return employee.value;

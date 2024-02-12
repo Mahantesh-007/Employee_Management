@@ -31,6 +31,7 @@ export const useEmployeeStore = defineStore('employee', () => {
   async function updateEmployee(employeeId, updatedEmployee) {
     try {
       const response = await axios.put(`${backendurl}/api/employee/${employeeId}`, updatedEmployee)
+      await getAllEmployees();
       return response.data.employee 
     } catch (error) {
       console.error(error)
@@ -41,7 +42,6 @@ export const useEmployeeStore = defineStore('employee', () => {
   async function getEmployee(employeeId) {
     try {
       const response = await axios.get(`${backendurl}/api/employee/${employeeId}`)
-    
       return response.data 
     } catch (error) {
       console.error(error)

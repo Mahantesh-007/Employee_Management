@@ -10,7 +10,7 @@
     </div>
     <div v-else>
       <div class="p-grid p-justify-center">
-        <div v-for="employee in employees" :key="employee._id" class="p-col-12 p-md-6 p-lg-4">
+        <div v-for="employee in employees" :key="employee._id" class="p-col-12 p-md-6 p-lg-4" @click="handleClick(employee._id)">
           <div class="p-card p-p-4 p-shadow-2">
             <h3>{{ employee.firstName }} {{ employee.lastName }}</h3>
             <div class="p-text-bold text-primary">Field of Employment:</div>
@@ -27,6 +27,7 @@
 </template>
   
 <script>
+import { useRouter } from 'vue-router'
 import { useEmployeeStore } from '@/stores/employee'
 import {  ref } from 'vue'
 
@@ -34,10 +35,18 @@ export default {
   setup() {
     let employees = ref([])
     const employeeStore = useEmployeeStore()
-      employees.value = employeeStore.displayEmployee();
-      console.log(employees.value)
+    const router = useRouter();
+    
+    employees.value = employeeStore.displayEmployee();
+
+    function handleClick(id){
+      router.push(`/view-employee/${id}`)
+    }
+      
+      
     return {
-      employees
+      employees,
+      handleClick
     }
   }
 }

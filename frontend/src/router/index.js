@@ -22,13 +22,18 @@ const router = createRouter({
     },
     {
       path: '/view-employee',
-      name: 'viewEmployee',
+      name: 'viewEmployees',
       component: () => import('../views/DisplayEmployee.vue')
     },
     {
       path:'/edit-employee/:id',
       name:'editEmployee',
       component: () => import('../views/EditEmployee.vue')
+    },
+    {
+      path:'/view-employee/:id',
+      name:'viewEmployee',
+      component: () => import('../views/DisplayUser.vue')
     }
   ]
 })

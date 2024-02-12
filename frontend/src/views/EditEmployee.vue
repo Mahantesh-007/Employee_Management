@@ -1,7 +1,7 @@
 <template>
     <div class="center-content">
       <div class="p-col-8">
-        <h2>Add Employee</h2>
+        <h2>Update Employee</h2>
         <div class="p-card p-fluid">
           <div class="p-field">
             <label for="name">First Name</label>
@@ -29,7 +29,7 @@
             <Textarea rows="5" cols="30" id="about" v-model="employee.about" />
           </div>
           <div class="p-field">
-            <Button @click="editEmployee" label="Add Employee" class="p-button-primary" />
+            <Button @click="editEmployee" label="Edit Employee" class="p-button-primary" />
           </div>
         </div>
       </div>
@@ -37,10 +37,9 @@
   </template>
   
   <script>
-  import { ref, onMounted} from 'vue'
-  import { useEmployeeStore } from '@/stores/employee'
-  import { useRouter, useRoute } from 'vue-router'
-  import { watch } from 'vue'
+  import { ref, onMounted } from 'vue'
+import { useEmployeeStore } from '@/stores/employee'
+import { useRouter, useRoute } from 'vue-router'
 
 export default {
   setup() {
@@ -55,66 +54,62 @@ export default {
       about: ''
     })
     const employeeStore = useEmployeeStore()
-    
 
-    console.log("hi")
-    onMounted(async() => {
-
-        try{
-            console.log(employeeId.value)
-        const fetchEmployee = await employeeStore.getEmployee(employeeId.value);
-        employee.value = {...fetchEmployee,employmentField:fetchEmployee.fieldOfEmployment}
-        }
-        catch(e){
-            console.log(e)
-        }
+    onMounted(async () => {
+      try {
+        const fetchedEmployee = await employeeStore.getEmployee(employeeId.value);
+        employee.value = { ...fetchedEmployee, employmentField: fetchedEmployee.fieldOfEmployment }
+      } catch (error) {
+        console.error('Error fetching employee:', error)
+      }
     });
 
-  
-      function editEmployee() {
-        if (!employee.value.firstName || !employee.value.lastName || !employee.value.employmentField) {
-          return;
-        }
+    async function editEmployee() {
+      if (!employee.value.firstName || !employee.value.lastName || !employee.value.employmentField) {
+        return;
+      }
 
-      const validSkill = employee.value.skills.filter(skill => skill.trim()!=='')
+      const validSkill = employee.value.skills.filter(skill => skill.trim() !== '')
 
-        const employeeData = {
-          ...employee.value,
-          fieldOfEmployment: employee.value.employmentField,skills:validSkill
-        };
-        console.log(employeeData);
-  
-        employeeStore.updateEmployee(employeeId.value,employeeData)
+      const employeeData = {
+        ...employee.value,
+        fieldOfEmployment: employee.value.employmentField,
+        skills: validSkill
+      };
+
+      try {
+        await employeeStore.updateEmployee(employeeId.value, employeeData);
         employee.value = {
           firstName: '',
           lastName: '',
           employmentField: '',
-          skills: [''], 
+          skills: [''],
           about: ''
         }
-  
-        router.push('/view-employee')
-  
-      }
-
-      function addSkill(){
-        employee.value.skills.push('');
-      }
-
-      function removeSkill(index){
-        if(employee.value.skills.length > 1){
-          employee.value.skills.splice(index,1);
-        }
-      }
-  
-      return {
-        employee,
-        editEmployee,
-        addSkill,
-        removeSkill
+        router.push('/view-employee');
+      } catch (error) {
+        console.error('Error updating employee:', error)
       }
     }
+
+    function addSkill() {
+      employee.value.skills.push('');
+    }
+
+    function removeSkill(index) {
+      if (employee.value.skills.length > 1) {
+        employee.value.skills.splice(index, 1);
+      }
+    }
+
+    return {
+      employee,
+      editEmployee,
+      addSkill,
+      removeSkill
+    }
   }
+}
   </script>
   
   <style scoped>

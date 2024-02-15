@@ -1,6 +1,6 @@
 <template>
   <div class="employee-details">
-    <h2 class="page-title">Details Of Employee</h2>
+    <h2 class="page-title">Details Of Employee </h2>
     <div class="details-container">
       <div class="p-card p-p-4 p-shadow-2">
         <h3>{{ employee.firstName }} {{ employee.lastName }}</h3>
@@ -25,6 +25,9 @@
           <button class="delete-button" @click="deleteEmployee">
             <i class="fas fa-trash-alt"></i> Delete
           </button>
+          <button  @click="employeeAvailable" :class="['toggle-button', employee.isAvailable ? 'green' : 'red']">
+            
+          </button>
         </div>
       </div>
     </div>
@@ -41,23 +44,26 @@ export default {
     const router = useRouter()
     const route = useRoute()
     const employeeId = ref(route.params.id)
-    const employee = ref({
+    let employee = ref({
       firstName: '',
       lastName: '',
       employmentField: '',
       skills: [''],
-      about: ''
+      about: '',
+      isAvailable: null
+
     })
     const employeeStore = useEmployeeStore()
 
     onMounted(async () => {
       try {
         const fetchedEmployee = await employeeStore.getEmployee(employeeId.value)
-        employee.value = { ...fetchedEmployee, employmentField: fetchedEmployee.fieldOfEmployment }
+        employee.value = await { ...fetchedEmployee, employmentField: fetchedEmployee.fieldOfEmployment }
       } catch (error) {
         console.error('Error fetching employee:', error)
       }
     })
+
 
     function editEmployee() {
       router.push(`/edit-employee/${employeeId.value}`)
@@ -66,16 +72,34 @@ export default {
     async function deleteEmployee() {
       try {
         await employeeStore.deleteEmployee(employeeId.value)
-        router.push('/view-employee')
+        router.push('/')
       } catch (error) {
         console.error('Error deleting employee:', error)
+      }
+    }
+
+    async function employeeAvailable(){
+      try {
+        let isAvailableValue = employee.value.isAvailable;
+        const employeeData = {
+        ...employee.value,
+        fieldOfEmployment: employee.value.employmentField,
+        isAvailable:!isAvailableValue
+
+      };
+
+      let updatedValue = await employeeStore.updateEmployee(employeeId.value,employeeData);
+      employee.value = {...updatedValue,employmentField: updatedValue.fieldOfEmployment};
+      } catch (error) {
+        console.log(error)
       }
     }
 
     return {
       employee,
       editEmployee,
-      deleteEmployee
+      deleteEmployee,
+      employeeAvailable
     }
   }
 }
@@ -103,6 +127,7 @@ export default {
   margin: 20px;
   padding: 30px;
   border: 2px solid;
+  position: relative;
 }
 
 .details-grid {
@@ -130,7 +155,6 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  /* padding: 10px 0; */
   width: 6rem;
   aspect-ratio: 6/2.5;
   border: none;
@@ -155,6 +179,25 @@ export default {
 
 .text-primary {
   color: #007bff;
+}
+
+.toggle-button{
+  border-radius: 100%;
+  padding: 1em;
+  position: absolute;
+  top: 12%;
+  right: 7%;
+  
+}
+
+.green{
+  background-color: rgba(8, 201, 8, 0.941);
+  box-shadow: 0 4px 6px -1px rgba(1, 214, 5, 0.793), 0 2px 4px -2px rgba(0, 197, 23, 0.76);
+}
+
+.red{
+  background-color: rgba(244, 22, 22, 0.934);
+  box-shadow: 0 4px 6px -1px rgba(214, 33, 1, 0.793), 0 2px 4px -2px rgba(197, 0, 10, 0.76);
 }
 @media screen and (max-width: 768px) {
   .details-container {

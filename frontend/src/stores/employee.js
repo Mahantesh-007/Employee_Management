@@ -52,8 +52,7 @@ export const useEmployeeStore = defineStore('employee', () => {
 
   async function getAllEmployees() {
     try {
-      const response = await axios.get(`${backendurl}/api/employee`)
-      console.log(response.data);
+      const response = await axios.get(`${backendurl}/api/employee`);
       employee.value = await response.data;
       return  await response.data 
     } catch (error) {

@@ -27,6 +27,10 @@
         </div>
       </div>
     </div>
+    <div class = "addButton">
+      <Button @click="addEmployee">Add Employee</Button>
+
+    </div>
   </div>
 </template>
 
@@ -42,17 +46,20 @@ export default {
     const router = useRouter()
     
     employees.value = employeeStore.displayEmployee()
-    console.log(employees.value)
+    
 
     function handleClick(id){
       router.push(`/view-employee/${id}`)
     }
 
-    console.log(employees.value)
+    function addEmployee(){
+      router.push('/add-employee')
+    }
       
     return {
       employees,
-      handleClick
+      handleClick,
+      addEmployee
     }
   }
 }

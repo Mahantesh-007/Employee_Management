@@ -86,7 +86,7 @@ export default {
           skills: [''],
           about: ''
         }
-        router.push('/view-employee');
+        router.push('/');
       } catch (error) {
         console.error('Error updating employee:', error)
       }

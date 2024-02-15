@@ -66,7 +66,6 @@
           ...employee.value,
           fieldOfEmployment: employee.value.employmentField,skills:validSkill
         };
-        console.log(employeeData);
   
         await employeeStore.addEmployee(employeeData)
         employee.value = {
@@ -77,7 +76,7 @@
           about: ''
         }
   
-        router.push('/view-employee')
+        router.push('/')
   
       }
 

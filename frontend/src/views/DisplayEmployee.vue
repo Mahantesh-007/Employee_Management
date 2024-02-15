@@ -1,7 +1,7 @@
 <template>
-  <div class="p-grid p-dir-col p-align-center">
+   <div class="employee-list">
     <h2 class="p-text-center">All Employees</h2>
-    <div v-if="employees.length === 0" class="p-col-12">
+    <div v-if="employees.length === 0" class="no-employees">
       <div class="p-card p-p-4 p-shadow-2">
         <div class="p-text-center">
           <p class="text-muted">No employees found.</p>
@@ -9,40 +9,46 @@
       </div>
     </div>
     <div v-else>
-      <div class="p-grid p-justify-center">
-        <div v-for="employee in employees" :key="employee._id" class="p-col-12 p-md-6 p-lg-4" @click="handleClick(employee._id)">
+      <div class="employee-grid">
+        <div v-for="employee in employees" :key="employee._id" :class="['employee-card', employee.isAvailable ? 'green' : 'red']" @click="handleClick(employee._id)">
           <div class="p-card p-p-4 p-shadow-2">
-            <h3>{{ employee.firstName }} {{ employee.lastName }}</h3>
-            <div class="p-text-bold text-primary">Field of Employment:</div>
-            <div class="text-secondary">{{ employee.fieldOfEmployment }}</div>
-            <div class="p-text-bold text-primary">Skills:</div>
-            <div class="text-secondary">{{ employee.skills.join(', ') }}</div>
-            <div class="p-text-bold text-primary">About:</div>
-            <div class="text-secondary">{{ employee.about }}</div>
+            <h3 class="employee-name">{{ employee.firstName }} {{ employee.lastName }}</h3>
+            <div class="description-grid">
+              <div class="field-of-employment">
+                <div class="text-bold text-primary">Field of Employment:</div>
+                <div class="text-secondary">{{ employee.fieldOfEmployment }}</div>
+              </div>
+              <div class="about">
+                <div class="text-bold text-primary">About:</div>
+                <div class="text-secondary">{{ employee.about.slice(0, 20) }}{{ employee.about.length > 20 ? '...' : '' }}</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 </template>
-  
+
 <script>
 import { useRouter } from 'vue-router'
 import { useEmployeeStore } from '@/stores/employee'
-import {  ref } from 'vue'
+import { ref } from 'vue'
 
 export default {
   setup() {
-    let employees = ref([])
+    const employees = ref([])
     const employeeStore = useEmployeeStore()
-    const router = useRouter();
+    const router = useRouter()
     
-    employees.value = employeeStore.displayEmployee();
+    employees.value = employeeStore.displayEmployee()
+    console.log(employees.value)
 
     function handleClick(id){
       router.push(`/view-employee/${id}`)
     }
-      
+
+    console.log(employees.value)
       
     return {
       employees,
@@ -51,23 +57,56 @@ export default {
   }
 }
 </script>
-  
+
 <style scoped>
-.p-grid {
-  max-width: 1200px;
+.employee-list {
+  max-width: 600px; 
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.no-employees {
+  text-align: center;
+}
+
+.employee-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.employee-card {
+  width: 100%;
+  margin-bottom: 20px;
 }
 
 .p-card {
-  margin-bottom: 20px;
   border-radius: 8px;
+  padding: 20px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-h2 {
-  margin-bottom: 20px;
+.employee-name {
+  text-align: center; 
+  margin-bottom: 10px;
 }
 
-.text-muted {
-  color: #6c757d; 
+.description-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.field-of-employment,
+.about {
+  padding: 10px;
+  border-radius: 8px;
+  background-color: #f4f4f4;
+}
+
+.text-bold {
+  font-weight: bold;
 }
 
 .text-primary {
@@ -78,7 +117,11 @@ h2 {
   color: #6c757d;
 }
 
-.p-text-bold {
-  font-weight: bold;
+.green{
+  box-shadow: 0 4px 6px -1px rgba(1, 214, 5, 0.793), 0 2px 4px -2px rgba(0, 197, 23, 0.76);
+}
+
+.red{
+  box-shadow: 0 4px 6px -1px rgba(214, 33, 1, 0.793), 0 2px 4px -2px rgba(197, 0, 10, 0.76);
 }
 </style>

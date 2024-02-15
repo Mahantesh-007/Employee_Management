@@ -55,7 +55,7 @@
   
       const employeeStore = useEmployeeStore()
   
-      function addEmployee() {
+      async function addEmployee() {
         if (!employee.value.firstName || !employee.value.lastName || !employee.value.employmentField) {
           return;
         }
@@ -68,7 +68,7 @@
         };
         console.log(employeeData);
   
-        employeeStore.addEmployee(employeeData)
+        await employeeStore.addEmployee(employeeData)
         employee.value = {
           firstName: '',
           lastName: '',

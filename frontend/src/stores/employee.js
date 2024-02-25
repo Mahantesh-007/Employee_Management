@@ -18,7 +18,6 @@ export const useEmployeeStore = defineStore('employee', () => {
   async function deleteEmployee(employeeId) {
     try {
       const filteredEmployees = employees.value.splice(employeeId,1);
-      console.log(filteredEmployees)
       localStorage.setItem('employees', JSON.stringify(filteredEmployees));
     } catch (error) {
       console.error(error);
@@ -28,8 +27,6 @@ export const useEmployeeStore = defineStore('employee', () => {
   
   function updateEmployee(index, updatedEmployee) {
     try {
-      // const index = employees.value.findIndex((employee,idx) => idx === employeeId);
-
       if (index !== -1) {
         employees.value[index] = updatedEmployee;
         localStorage.setItem('employees', JSON.stringify(employees.value));

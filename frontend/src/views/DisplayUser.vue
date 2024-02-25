@@ -52,7 +52,6 @@ export default {
       const switchSlider = document.getElementsByClassName("p-inputswitch-slider")[0]
       if(!newvalue){
       switchSlider.style.backgroundColor = 'red';
-      console.log(switchSlider)
     }
     else{
       switchSlider.style.backgroundColor = 'green'

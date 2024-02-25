@@ -50,7 +50,8 @@
         lastName: '',
         employmentField: '',
         skills: [''],
-        about: ''
+        about: '',
+        isAvailable:true
       })
   
       const employeeStore = useEmployeeStore()

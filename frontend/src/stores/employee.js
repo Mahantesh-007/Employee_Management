@@ -1,70 +1,70 @@
 import { defineStore } from 'pinia'
-import axios from 'axios'
-import { backendurl } from '@/constant'
 import { ref } from 'vue'
 
 export const useEmployeeStore = defineStore('employee', () => {
+  let employees = ref(JSON.parse(localStorage.getItem('employees')) || []);
 
-  let employee = ref([]);
-
-  async function addEmployee(employee) {
+  function addEmployee(newEmployee) {
     try {
-      const response = await axios.post(`${backendurl}/api/employee/create`, employee)
-      await getAllEmployees();
-      return response.data.employee
+      employees.value.push(newEmployee);
+      localStorage.setItem('employees', JSON.stringify(employees.value));
+      return newEmployee;
     } catch (error) {
-      console.error(error)
-      throw new Error('Failed to add employee')
+      console.error(error);
+      throw new Error('Failed to add employee');
     }
   }
 
   async function deleteEmployee(employeeId) {
     try {
-      const response = await axios.delete(`${backendurl}/api/employee/${employeeId}`)
-      await getAllEmployees()
-      return response.data 
+      const filteredEmployees = employees.value.splice(employeeId,1);
+      console.log(filteredEmployees)
+      localStorage.setItem('employees', JSON.stringify(filteredEmployees));
     } catch (error) {
-      console.error(error)
-      throw new Error('Failed to delete employee')
+      console.error(error);
+      throw new Error('Failed to delete employee');
     }
   }
-
-  async function updateEmployee(employeeId, updatedEmployee) {
+  
+  function updateEmployee(index, updatedEmployee) {
     try {
-      const response = await axios.put(`${backendurl}/api/employee/${employeeId}`, updatedEmployee)
-      await getAllEmployees();
-      return response.data.employee 
+      // const index = employees.value.findIndex((employee,idx) => idx === employeeId);
+
+      if (index !== -1) {
+        employees.value[index] = updatedEmployee;
+        localStorage.setItem('employees', JSON.stringify(employees.value));
+        return updatedEmployee;
+      } else {
+        throw new Error('Employee not found');
+      }
     } catch (error) {
-      console.error(error)
-      throw new Error('Failed to update employee')
+      console.error(error);
+      throw new Error('Failed to update employee');
     }
   }
 
   async function getEmployee(employeeId) {
     try {
-      const response = await axios.get(`${backendurl}/api/employee/${employeeId}`)
-      return response.data 
+      const employee = await employees.value[employeeId]
+      if (employee) {
+        return await employee;
+      } else {
+        throw new Error('Employee not found');
+      }
     } catch (error) {
-      console.error(error)
-      throw new Error('Failed to get employee')
+      console.error(error);
+      throw new Error('Failed to get employee');
     }
   }
 
-  async function getAllEmployees() {
+  function getAllEmployees() {
     try {
-      const response = await axios.get(`${backendurl}/api/employee`);
-      employee.value = await response.data;
-      return  await response.data 
+      return employees.value;
     } catch (error) {
-      console.error(error)
-      throw new Error('Failed to get all employees')
+      console.error(error);
+      throw new Error('Failed to get all employees');
     }
   }
 
-
-  function displayEmployee(){
-    return employee.value;
-  }
-
-  return { addEmployee, deleteEmployee, updateEmployee, getEmployee, getAllEmployees, displayEmployee }
-})
+  return { addEmployee, deleteEmployee, updateEmployee, getEmployee, getAllEmployees };
+});

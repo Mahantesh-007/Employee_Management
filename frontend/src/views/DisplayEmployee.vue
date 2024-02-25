@@ -10,8 +10,8 @@
     </div>
     <div v-else>
       <div class="employee-grid">
-        <div v-for="employee in employees" :key="employee._id" :class="['employee-card', employee.isAvailable ? 'green' : 'red']" @click="handleClick(employee._id)">
-          <div class="p-card p-p-4 p-shadow-2">
+        <div v-for="(employee, index) in employees" :key="index" :class="['employee-card', employee.isAvailable ? 'green' : 'red']" @click="()=>handleClick(index)">
+          <div :class="['p-card', 'p-p-4', 'p-shadow-2',employee.isAvailable?'':'bg-grey']" >
             <h3 class="employee-name">{{ employee.firstName }} {{ employee.lastName }}</h3>
             <div class="description-grid">
               <div class="field-of-employment">
@@ -37,7 +37,7 @@
 <script>
 import { useRouter } from 'vue-router'
 import { useEmployeeStore } from '@/stores/employee'
-import { ref } from 'vue'
+import { ref,onMounted} from 'vue'
 
 export default {
   setup() {
@@ -45,7 +45,10 @@ export default {
     const employeeStore = useEmployeeStore()
     const router = useRouter()
     
-    employees.value = employeeStore.displayEmployee()
+    onMounted(async() => {
+      employees.value = await employeeStore.getAllEmployees()
+      
+    })
     
 
     function handleClick(id){
@@ -90,7 +93,6 @@ export default {
 .p-card {
   border-radius: 8px;
   padding: 20px;
-  background-color: #ffffff;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
@@ -125,10 +127,16 @@ export default {
 }
 
 .green{
-  box-shadow: 0 4px 6px -1px rgba(1, 214, 5, 0.793), 0 2px 4px -2px rgba(0, 197, 23, 0.76);
+  border: 3px solid green;
 }
 
 .red{
-  box-shadow: 0 4px 6px -1px rgba(214, 33, 1, 0.793), 0 2px 4px -2px rgba(197, 0, 10, 0.76);
+  border: 3px solid red;
+  background-color: #6c757d;
+}
+
+.bg-grey{
+  background-color: #ffffffc7;
+  backdrop-filter: blur(10px);
 }
 </style>

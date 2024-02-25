@@ -1,6 +1,6 @@
 <template>
-  <div class="employee-details">
-    <h2 class="page-title">Details Of Employee </h2>
+  <div class="employee-details" >
+    <h2 class="page-title" id = 'testing'>Details Of Employee </h2>
     <div class="details-container">
       <div class="p-card p-p-4 p-shadow-2">
         <h3>{{ employee.firstName }} {{ employee.lastName }}</h3>
@@ -25,9 +25,10 @@
           <button class="delete-button" @click="deleteEmployee">
             <i class="fas fa-trash-alt"></i> Delete
           </button>
-          <button  @click="employeeAvailable" :class="['toggle-button', employee.isAvailable ? 'green' : 'red']">
-            
-          </button>
+          <div class = "toggle-button">
+            <InputSwitch  @click="employeeAvailable" v-model="checked"  />
+          </div>
+
         </div>
       </div>
     </div>
@@ -35,15 +36,30 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted,watch } from 'vue'
 import { useEmployeeStore } from '@/stores/employee'
 import { useRouter, useRoute } from 'vue-router'
+
 
 export default {
   setup() {
     const router = useRouter()
     const route = useRoute()
     const employeeId = ref(route.params.id)
+    const checked = ref(null);
+  
+    watch(checked,(newvalue)=>{
+      const switchSlider = document.getElementsByClassName("p-inputswitch-slider")[0]
+      if(!newvalue){
+      switchSlider.style.backgroundColor = 'red';
+      console.log(switchSlider)
+    }
+    else{
+      switchSlider.style.backgroundColor = 'green'
+    }
+    })
+    
+    
     let employee = ref({
       firstName: '',
       lastName: '',
@@ -51,18 +67,24 @@ export default {
       skills: [''],
       about: '',
       isAvailable: null
-
     })
     const employeeStore = useEmployeeStore()
 
     onMounted(async () => {
+
       try {
         const fetchedEmployee = await employeeStore.getEmployee(employeeId.value)
-        employee.value = await { ...fetchedEmployee, employmentField: fetchedEmployee.fieldOfEmployment }
+        employee.value = await { ...fetchedEmployee, employmentField: fetchedEmployee.fieldOfEmployment, checked:fetchedEmployee.isAvailable }
+        checked.value=fetchedEmployee.isAvailable;
+        const switchSlider = document.getElementsByClassName("p-inputswitch-slider")[0]
+      if(!checked.value){
+        switchSlider.style.backgroundColor = 'red';
+      }
       } catch (error) {
         console.error('Error fetching employee:', error)
       }
     })
+
 
 
     function editEmployee() {
@@ -84,7 +106,7 @@ export default {
         const employeeData = {
         ...employee.value,
         fieldOfEmployment: employee.value.employmentField,
-        isAvailable:!isAvailableValue
+        isAvailable:!checked.value
 
       };
 
@@ -97,6 +119,7 @@ export default {
 
     return {
       employee,
+      checked,
       editEmployee,
       deleteEmployee,
       employeeAvailable
@@ -182,14 +205,10 @@ export default {
 }
 
 .toggle-button{
-  border-radius: 100%;
-  padding: 1em;
   position: absolute;
-  top: 12%;
-  right: 7%;
-  
+  top: 13%;
+  right: 6rem;
 }
-
 .green{
   background-color: rgba(8, 201, 8, 0.941);
   box-shadow: 0 4px 6px -1px rgba(1, 214, 5, 0.793), 0 2px 4px -2px rgba(0, 197, 23, 0.76);
